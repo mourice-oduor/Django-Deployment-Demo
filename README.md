@@ -3,3 +3,7 @@ This is a sample demo of deploying django Application/project on PythonAnywhere.
 
 # link to documentation site;
 #                            https://help.pythonanywhere.com/pages/DeployExistingDjangoProject/
+
+# Links to Debugging during deployment:
+#                                      https://help.pythonanywhere.com/pages/DebuggingImportError
+
