@@ -6,4 +6,4 @@ This is a sample demo of deploying django Application/project on PythonAnywhere.
 
 # Links to Debugging during deployment:
 #                                      https://help.pythonanywhere.com/pages/DebuggingImportError
-
+#                                      https://tutorial.djangogirls.org/en/deploy/
