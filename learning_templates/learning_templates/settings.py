@@ -26,7 +26,7 @@ SECRET_KEY = '$o*y(qfnwx8ga(=9i(19ani8-ios&g9g((+k1mfci^3qfs4ssw'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['moryso2020.pythonanywhere.com']
 
 
 # Application definition
