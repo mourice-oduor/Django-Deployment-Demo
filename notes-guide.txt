@@ -1,0 +1,50 @@
+DJANGO DEPLOYMENT:
+   Using Python Anywhere.com;
+   go to bash and type;
+   mkvirtualenv --python=/usr/bin/python3.7 myproj-virtualenv
+   before installing django on virtual env; go to idle on machine; type;
+   >>>python
+   >>>import django
+   >>>django.__version__  >> to know the version of django to install
+   then back to bash on remote and install it by;
+   >>>> pip install -U django=="version"
+   -In order to confirm if django is installed type:
+   >>> which django-admin.py
+   >>> clone your github repo on bash
+   >>> cd into it, and also into your basic_app
+   >>> make all migrations
+   >>> python manage.py createsuperuser
+   >>> click on to Dashboard then go to web
+   >>> add a new webApp and follow all those steps carefully
+   >>> here select manual config instead of using Django framework, this is in order to edit the wsgi file under virtual env   
+   >>> After the steps and WSGI file created, move to "Enter path to virtual env" section, and enter your virtual env path 
+   >>>>>>> i.e: /home/moryso2020/.virtualenvs/myproj >>> then;
+   >>>  CLICK: Start a console in this virtualenv   
+   >>>> then scroll up to: "Enter the path to your web app source code" , and before this, start a console first, in order to get 
+   >>>>>>> -to get the actual path to source code. That's after navigating to the "learning_templates" path.\
+   >>> copy the full path and paste it into the :"source code" area
+   >>>> After that, click on the "WSGI configuration file:" to edit it
+   >> remove the hello world code, from line 13--47
+   >>> Start un-commenting the line from where Django starts, that's depending on your Django version
+   >>> set the path to;
+                    >>> path = '/home/moryso2020/Django-Deployment-Demo/learning_templates/
+  >>> provide django where the settings.py file is located in your machine
+        >>>> i.e; os.environ['DJANGO_SETTINGS_MODULE'] = 'learning_templates.settings'
+        then :
+              import django
+              django.setup() >> then uncomment the two preceeding lines
+  >>>save it then go to Dashboard, then web to see if the link is created, click it to run your website
+  >>After, go back to the web-tab and fix the static files
+  >>>URL: /static/admin
+  >>>Dir: /home/moryso2020/.virtualenvs/myproj/lib/python3.7/site-packages/django/contrib/admin/static/admin
+  >>> Reload the web app
+  >>> Turn off debug mode on settings.py >>DEBUG=False (This could have been done earlier before running the web app)
+  >>> on settings.py file, Allowed hosts = ['moryso2020.pythonanywhere.com'] >> this is under files to your app
+  >>> after settings.py on web-tab, in files go back twice upto this dir:
+                >>> /home/moryso2020/Django-Deployment-Demo/learning_templates
+     >> Create a new directory; "static" , this is our static files dir
+     >> back to web-app/tab and reload to open the link in new tab
+ >>> Now set the link to your static files localy;
+     >>URL: /static/
+     >>Dir:/home/moryso2020/Django-Deployment-Demo/learning_templates/static
+     <>reload then open the link
