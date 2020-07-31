@@ -1,5 +1,8 @@
 # Django-Deployment-Demo
-This is a sample demo of deploying django Application/project on PythonAnywhere.com site
+This is a sample demo of deploying django Application/project on availabe free host sites such as;
+                   >> PythonAnywhere.com site
+                   >> Heroku
+                   >> Netlify.
 
 # link to documentation site;
 #                            https://help.pythonanywhere.com/pages/DeployExistingDjangoProject/
