@@ -1,0 +1,182 @@
+Links:
+      https://devcenter.heroku.com/articles/getting-started-with-python#set-up
+      https://medium.com/@BennettGarner/deploying-django-to-heroku-procfile-static-root-other-pitfalls-e7ab8b2ba33b
+      https://www.codementor.io/@jamesezechukwu/how-to-deploy-django-app-on-heroku-dtsee04d4
+      https://simpleisbetterthancomplex.com/tutorial/2016/08/09/how-to-deploy-django-applications-on-heroku.html
+      https://developer.mozilla.org/en-US/docs/Learn/Server-side/Django/Deployment
+      https://tutorial-extensions.djangogirls.org/en/heroku/
+      
+      
+Download git(bash-terminal), together with Heroku CLI
+Create an account on heroku,
+
+   1. Option-1 create a new app(unique name to he one you're to deploy), here I am using my "djangoblog-site" App
+
+GO to Heroku CLI and type; heroku login
+After login, type;
+                  heroku git:remote -a  djangoblog-site
+                  
+   2. Option 2: Navigate towards your project on your local machine, 
+                Activate the virtual ENV, then login using herku CLI
+                
+      >>>>> list of things you will probably need to add to your project:
+
+       a) Add a Procfile in the project root;
+       b) Add requirements.txt file with all the requirements in the project root;
+       c) A runtime.txt to specify the correct Python version in the project root;
+       d) Add Gunicorn to requirements.txt;
+       e) Configure whitenoise to serve static files.
+       
+     a) Add a Procfile in the project root directory to define process types and
+       explicitly declare what command should be executed to start your app. i.e "mysite"
+                        on the terminal type;
+                                             touch Procfile
+       Open the Procfile and add the line below;
+                                 web: gunicorn djangoblog-site.wsgi --log-file -
+       Note: change "djangoblog-site" with the name of your Django project to point to the location of the wsgi.py file.
+       
+     b) Add a requirements.txt file, as this recognize a deployed application as a Python application.
+        If you are using a virtualenv and pip you can simply run:
+                                                                  pip freeze > requirements.txt
+     
+     c) Add a runtime.txt file in the project root directory and specify the correct Python version.
+        Open the runtime.txt file and add the following line, or as applicable, to your application.
+                               python-3.7.8
+                               
+     d) Install the following packages in the environment using;
+                                                                pip install gunicorn dj-database-url whitenoise psycopg2
+        NOTE: Ensure to update the requirements.txt file by;
+                                                           pip freeze > requirements.txt update
+              This will be done to confirm if the packages above are saved inside it.
+              Again, if the "psycopg2" package fails to install, try this;
+                                                                 pip install psycopg2-binary, 
+                                                                             OR
+                                                                 sudo apt install libpq-dev python3-dev
+              Link to it's binary installation:
+               https://stackoverflow.com/questions/5420789/how-to-install-psycopg2-with-pip-on-python#:~:text=The%20error%20that%20you%20received,the%20%2D%2Dpg%2Dconfig%20option.
+        
+        >>> Django Heroku: This is a module that helps with settings, testing, and logging automatically.
+                           To install it, type;
+                                               pip install django-heroku
+            Again we add it; At the top of settings.py import the module.
+             Then, at the very bottom, call it: 
+             i.e;
+                 import django_heroku
+                 ...
+                 # All of your settings here
+                 ...
+                 django_heroku.settings(locals())
+        
+        
+               
+     e) Set Up The Static Assets;
+        Open up settings.py file and make the following changes, preferably at the bottom of the file.
+        
+                     STATIC_ROOT  =   os.path.join(BASE_DIR, 'staticfiles')
+                     STATIC_URL = '/static/'        
+               
+              # Extra lookup directories for collectstatic to find static files
+                    STATICFILES_DIRS = (
+                        os.path.join(BASE_DIR, 'static'),
+                    )
+
+              #  Add configuration for static files storage using whitenoise as this reduces the size of the static files
+               when they are served (this is more efficient). Just add the following to the bottom of /locallibrary/settings.py:
+               
+                    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+        
+        Add whitenoise near the top of the list, just below the SecurityMiddleware list in settings.py; i.e
+                      MIDDLEWARE = [
+                                     'django.middleware.security.SecurityMiddleware',
+                                     'whitenoise.middleware.WhiteNoiseMiddleware',
+                                     ...
+                                     ...
+                                    ]
+        
+       Update Database Configuration in settings.py (at the bottom of the file)
+         i.e; Add:
+                  # Heroku: Update database configuration from $DATABASE_URL.
+                    import dj_database_url
+                    db_from_env = dj_database_url.config(conn_max_age=500)
+                    DATABASES['default'].update(db_from_env) 
+                  
+                  
+     f)  Create App in Heroku from terminal;
+            heroku create blogsite-django
+            
+         Add your app domain name to ALLOWED_HOSTS in settings.py:
+                                                                  ALLOWED_HOSTS = ['blogsite-django.herokuapp.com']
+                                                                  
+     g)  Initialize Git and connect your new app (or existing one) to Heroku Git remote repository by:
+            git init
+            
+            add .gitignore
+            Create a .gitignore file with the following content (to prevent the cache from building up on the remote).
+            type; 
+                 touch .gitignore
+                 ls -al :to view all the files
+            Use your favorite text editor to open and add the following inside the .gitignore file you created:
+                                ### Django ###
+                                *.log
+                                *.pot
+                                *.pyc
+                                __pycache__/
+                                local_settings.py
+            
+         Add Heroku git remote repository by;
+            heroku git:remote -a blogsite-django    (replace blogsite-django with your recently created AppName) 
+                       OR
+            git remote add heroku https://git.heroku.com/blogsite-django.git 
+                 i.e;   git remote add heroku https://git.heroku.com/<your project>.git
+
+         
+         Add files to the staging area and commit changes through;
+            git add .
+            git commit -m "Initial commit"
+               Then
+         Push the project to the remote repository (deploy app to Heroku);
+            git push heroku master
+            
+       NOTE: If you get an error message with collectstatic, simply disable it by instructing Heroku to ignore running
+        the manage.py collecstatic command during the deployment process BY;
+                                                heroku config:set     DISABLE_COLLECTSTATIC=1 
+                                The rerun;
+                                                git push heroku master
+                                                
+       CONGRATULATIONS, YOU'RE DONE!!!!  Your project is now live on heroku.
+          
+       Migrate the Database by;
+                                        heroku run python manage.py migrate
+                                        heroku run python manage.py makemigrations
+                                        
+     ==============================================================================================================================
+       >>>> OPTIONAL  >>>>
+    h)   Setting configuration variables:
+              You can check out the configuration variables for the site using the "heroku config";
+                      > heroku config
+       
+       We set DJANGO_SECRET_KEY using the config:set command (as shown below). Remember to use your own secret key!:
+              heroku config:set DJANGO_SECRET_KEY='your own secret key'
+              
+       Note: The secret key needs to be really secret! One way to generate a new key is to use the Django Secret Key Generator;
+             https://miniwebtool.com/django-secret-key-generator/
+             
+       We similarly set DJANGO_DEBUG:
+                                     > heroku config:set DJANGO_DEBUG=
+       NOTE: If you get an error saying:
+             ""DisallowedHost at /post/4 Invalid HTTP_HOST header: '127.0.0.1:8000'. 
+             You may need to add '127.0.0.1' to ALLOWED_HOSTS."",
+          In your project settings.py file,set ALLOWED_HOSTS like this :
+          ALLOWED_HOSTS = ['<your app URL without the https:// prefix>.herokuapp.com','127.0.0.1']
+             i.e;
+          ALLOWED_HOSTS = ['blogsite-django.herokuapp.com', 'localhost', '127.0.0.1']
+          
+          Then save your settings and commit them to your Github repo and to Heroku:
+             
+              
+       
+       
+       
+                     
+
+
